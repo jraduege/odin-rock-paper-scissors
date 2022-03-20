@@ -94,7 +94,38 @@ function game(rounds) {
     for (let i = 0; i < rounds; i++) {
         let playerSelection = getPlayerSelection();
         let outcome=playRound(playerSelection, computerPlay());
+        switch (true) {
+            case outcome.includes("win"): 
+                roundWins++;
+                console.log(`Round ${i}: ${outcome}\n`);
+                break;
+            case outcome.includes("lose"):
+                roundLosses++;
+                console.log(`Round ${i}: ${outcome}\n`);
+                break;
+            default:
+                roundTies++;
+                console.log(`Round ${i}: ${outcome}.  Repeating round due to tie.\n`);
+                i--;
+        }
+    }
+    switch (true) {
+        case (roundWins > roundLosses):
+            console.log(`You win!  The score was ${roundWins} to ${roundLosses}.`);
+            break;
+        case (roundLosses > roundWins):
+            console.log(`You lose!  The score was ${roundWins} to ${roundLosses}.`);
+            break;
+        default:
+            console.log(`You tied.  The score was ${roundWins} to ${roundLosses}.`);
+    }
 }
-const playerSelection = "Rock";
-const computerSelection = computerPlay();
-console.log(playRound(playerSelection, computerSelection));
+
+let roundWins=0;
+let roundLosses=0;
+let roundTies=0;
+let gameWins=0;
+let gameLosses=0;
+let gameTies=0;
+
+game(5);
