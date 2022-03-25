@@ -90,36 +90,66 @@ function getPlayerSelection() {
     return lowerValue;
 }
 
-function game(rounds) {
-    for (let i = 0; i < rounds; i++) {
-        let playerSelection = getPlayerSelection();
-        let outcome=playRound(playerSelection, computerPlay());
-        switch (true) {
-            case outcome.includes("win"): 
-                roundWins++;
-                console.log(`Round ${i}: ${outcome}\n`);
-                break;
-            case outcome.includes("lose"):
-                roundLosses++;
-                console.log(`Round ${i}: ${outcome}\n`);
-                break;
-            default:
-                roundTies++;
-                console.log(`Round ${i}: ${outcome}.  Repeating round due to tie.\n`);
-                i--;
+const buttons=document.querySelectorAll("button");
+const result=document.querySelector(".roundResult");
+const scoreboard=document.querySelector(".scoreboard");
+const games=document.querySelector(".gameOutcome");
+const reset=document.querySelector(".reset");
+reset.addEventListener("click", handleReset);
+
+buttons.forEach(button => addEventListener("click", handleClick));
+
+function handleClick(e) {
+    const wasClicked = e.target.className;
+    if (roundWins < 5 && roundLosses < 5) {
+        if (!(wasClicked==="rock"||wasClicked==="paper"||wasClicked==="scissors")){
+            return ""
+        } else {
+            let currentRound = playRound(wasClicked,computerPlay());
+            result.textContent = currentRound;
+            switch (true) {
+                case currentRound.includes("win"): 
+                    roundWins++;
+                    break;
+                case currentRound.includes("lose"):
+                    roundLosses++;
+                    break;
+                default:
+                    roundTies++;
+            }
+            updateScore();
         }
-    }
-    switch (true) {
-        case (roundWins > roundLosses):
-            console.log(`You win!  The score was ${roundWins} to ${roundLosses}.`);
-            break;
-        case (roundLosses > roundWins):
-            console.log(`You lose!  The score was ${roundWins} to ${roundLosses}.`);
-            break;
-        default:
-            console.log(`You tied.  The score was ${roundWins} to ${roundLosses}.`);
+    } else {
+        result.textContent = "You must reset to start another game";
     }
 }
+
+function updateScore() {
+    scoreboard.textContent= `Wins: ${roundWins}
+    Losses: ${roundLosses}
+    Ties: ${roundTies}`
+    if (roundWins>=5) {
+        gameWins++;
+        games.textContent=`You Win!  Your record is now ${gameWins} wins and ${gameLosses} losses.`;
+    }
+    if (roundLosses>=5) {
+        gameLosses++;
+        games.textContent=`Bummer, you lose.  Your record is now ${gameWins} wins and ${gameLosses} losses.`;
+    }
+}
+
+
+
+function handleReset() {
+    roundWins=0;
+    roundLosses=0;
+    roundTies=0;
+    result.textContent="";
+    scoreboard.textContent="";
+    games.textContent="";
+}
+
+
 
 let roundWins=0;
 let roundLosses=0;
@@ -128,4 +158,3 @@ let gameWins=0;
 let gameLosses=0;
 let gameTies=0;
 
-game(5);
